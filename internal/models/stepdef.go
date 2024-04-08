@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strconv"
 
-	messages "github.com/cucumber/messages/go/v21"
+	messages "github.com/cucumber/messages/go/v24"
 
 	"github.com/cucumber/godog/formatters"
 )
@@ -51,6 +51,17 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 	}
 
 	if len(sd.Args) < numIn {
+		var newArgs []interface{}
+		for _, arg := range sd.Args {
+			if stepArg, ok := arg.(*messages.PickleStepArgument); ok {
+				newArgs = append(newArgs, stepArg.DataTable)
+				newArgs = append(newArgs, stepArg.DocString)
+			} else {
+				newArgs = append(newArgs, arg)
+			}
+		}
+
+		sd.Args = newArgs
 		return ctx, fmt.Errorf("%w: expected %d arguments, matched %d from step", ErrUnmatchedStepArgumentNumber, typ.NumIn(), len(sd.Args))
 	}
 
@@ -163,6 +174,7 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 			default:
 				return ctx, fmt.Errorf("%w: the argument %d type %T is not supported %s", ErrUnsupportedArgumentType, i, arg, param.Elem().String())
 			}
+
 		case reflect.Slice:
 			switch param {
 			case typeOfBytes:

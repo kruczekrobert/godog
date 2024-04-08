@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	gherkin "github.com/cucumber/gherkin/go/v26"
-	messages "github.com/cucumber/messages/go/v21"
+	messages "github.com/cucumber/messages/go/v24"
+	gherkin "github.com/kruczekrobert/gherkin/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -161,10 +161,25 @@ func InitializeScenario(ctx *ScenarioContext) {
 		}
 	})
 
+	ctx.Step(`I have "([^"]*)" table and docstring$`, tc.iHaveSomeTableAndDocString)
+
 	ctx.StepContext().Before(tc.inject)
 }
 
 type ctxKey string
+
+func (tc *godogFeaturesScenario) iHaveSomeTableAndDocString(name string, tbl *Table, dc *DocString) error {
+	if tbl.Rows[0].Cells[0].Value != "ID" {
+		return fmt.Errorf("[21438438] should be ID")
+	}
+	if strings.TrimSpace(dc.Content) != "{\"payload\": {\"data\": \"my_data\"}}" {
+		return fmt.Errorf("[21438438] should be {\"payload\": {\"data\": \"my_data\"}}")
+	}
+	if name != "some" {
+		return fmt.Errorf("[2143404340] should be some")
+	}
+	return nil
+}
 
 func (tc *godogFeaturesScenario) inject(ctx context.Context, step *Step) (context.Context, error) {
 	if !tc.allowInjection {
