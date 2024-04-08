@@ -7,6 +7,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"log"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -14,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	gherkin "github.com/cucumber/gherkin/go/v26"
-	messages "github.com/cucumber/messages/go/v21"
+	messages "github.com/cucumber/messages/go/v24"
+	gherkin "github.com/kruczekrobert/gherkin/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -161,10 +162,19 @@ func InitializeScenario(ctx *ScenarioContext) {
 		}
 	})
 
+	ctx.Step(`I have "([^"]*)" table and docstring$`, tc.iHaveSomeTableAndDocString)
+
 	ctx.StepContext().Before(tc.inject)
 }
 
 type ctxKey string
+
+func (tc *godogFeaturesScenario) iHaveSomeTableAndDocString(name string, tbl *Table, dc *DocString) error {
+	log.Println("[2018421842]", tbl.Rows[0].Cells[0].Value)
+	log.Println("[2025222522]", dc.Content)
+	log.Println("[21919919]", name)
+	return nil
+}
 
 func (tc *godogFeaturesScenario) inject(ctx context.Context, step *Step) (context.Context, error) {
 	if !tc.allowInjection {
