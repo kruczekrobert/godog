@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"strconv"
 
@@ -63,8 +62,7 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 		}
 
 		sd.Args = newArgs
-
-		log.Println("[21101101]", numIn, len(sd.Args))
+		return ctx, fmt.Errorf("%w: expected %d arguments, matched %d from step", ErrUnmatchedStepArgumentNumber, typ.NumIn(), len(sd.Args))
 	}
 
 	for i := 0; i < numIn; i++ {

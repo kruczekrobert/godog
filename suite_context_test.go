@@ -7,7 +7,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"log"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -170,9 +169,15 @@ func InitializeScenario(ctx *ScenarioContext) {
 type ctxKey string
 
 func (tc *godogFeaturesScenario) iHaveSomeTableAndDocString(name string, tbl *Table, dc *DocString) error {
-	log.Println("[2018421842]", tbl.Rows[0].Cells[0].Value)
-	log.Println("[2025222522]", dc.Content)
-	log.Println("[21919919]", name)
+	if tbl.Rows[0].Cells[0].Value != "ID" {
+		return fmt.Errorf("[21438438] should be ID")
+	}
+	if strings.TrimSpace(dc.Content) != "{\"payload\": {\"data\": \"my_data\"}}" {
+		return fmt.Errorf("[21438438] should be {\"payload\": {\"data\": \"my_data\"}}")
+	}
+	if name != "some" {
+		return fmt.Errorf("[2143404340] should be some")
+	}
 	return nil
 }
 
